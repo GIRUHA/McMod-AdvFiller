@@ -1,0 +1,57 @@
+buildscript
+{
+	repositories
+	{
+		mavenCentral()
+		maven
+		{
+			name = "forge"
+			url = "http://files.minecraftforge.net/maven"
+		}
+		maven
+		{
+			name = "sonatype"
+			url = "https://oss.sonatype.org/content/repositories/snapshots/"
+		}
+	}
+	dependencies
+	{
+		classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+	}
+}
+
+apply plugin: 'forge'
+
+version = "0.2"
+group= "alice.bcc"
+archivesBaseName = "BCColle"
+
+minecraft
+{
+	version = "1.7.10-10.13.2.1291"
+	runDir = "eclipse"
+}
+
+dependencies
+{
+	//compile 'com.mod-buildcraft:buildcraft:6.1.8:dev'
+}
+
+processResources
+{
+	inputs.property "version", project.version
+	inputs.property "mcversion", project.minecraft.version
+}
+
+[compileJava, compileTestJava].each
+{
+	it.options.encoding = "UTF-8"
+	it.sourceCompatibility = 1.7
+	it.targetCompatibility = 1.7
+}
+
+tasks.withType(JavaCompile)
+{
+	options.fork = true
+	options.forkOptions.jvmArgs += ["-Duser.language=en", "-Duser.country=US"]
+}
