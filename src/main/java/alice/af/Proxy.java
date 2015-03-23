@@ -3,6 +3,7 @@ package alice.af;
 import java.util.List;
 
 import alice.af.block.BlockAdvFiller;
+import alice.af.network.ChangeFillerConfig;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 
 public class Proxy
 {
@@ -21,10 +24,12 @@ public class Proxy
 	protected static IRecipe useGear;
 	protected static IRecipe noGear;
 
+	public final SimpleNetworkWrapper simpleNetWrapper;
 	protected GuiHandler guiHandler;
 
 	public Proxy()
 	{
+		this.simpleNetWrapper = new SimpleNetworkWrapper("advfiller"); // 20文字以上を指定してはいけない
 		this.guiHandler = new GuiHandler();
 	}
 
@@ -55,6 +60,8 @@ public class Proxy
 
 		NetworkRegistry network = NetworkRegistry.INSTANCE;
 		network.registerGuiHandler(AdvancedFiller.INSTANCE, this.guiHandler);
+
+		this.simpleNetWrapper.registerMessage(ChangeFillerConfig.class, ChangeFillerConfig.class, 0, Side.SERVER);
 	}
 
 	public void forgePostInitialization(FMLPostInitializationEvent event)

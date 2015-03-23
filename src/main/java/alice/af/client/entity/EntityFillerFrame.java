@@ -19,7 +19,8 @@ public final class EntityFillerFrame extends Entity
 
 		this.setSize(1F, 1F);
 		// レンダリングにはlastTickPosが使われるのでこのメソッドを使用
-		this.setLocationAndAngles(filler.xCoord, filler.yCoord, filler.zCoord, 0, 0);
+		this.setLocationAndAngles(filler.xCoord + 0.5, filler.yCoord, filler.zCoord + 0.5, 0, 0);
+
 		this.prevPosX = filler.xCoord;
 		this.prevPosY = filler.yCoord;
 		this.prevPosZ = filler.zCoord;
@@ -48,12 +49,26 @@ public final class EntityFillerFrame extends Entity
 	{
 		super.onEntityUpdate();
 
-		World world = this.filler.getWorldObj();
-		TileEntity te = world.getTileEntity(this.filler.xCoord, this.filler.yCoord, this.filler.zCoord);
-		if((te == null) || (te != this.filler))
+		World world = this.worldObj;
+
+		if(!world.isRemote)
 		{
-			world.weatherEffects.remove(this.filler.frame);
+			throw new IllegalStateException("SERVER SIDE!");
 		}
+
+		TileEntity te =  world.getTileEntity(this.filler.xCoord, this.filler.yCoord, this.filler.zCoord);
+		if((te == null) || !(te instanceof TileEntityAdvFiller))
+		{
+			this.filler.frame = null;
+			this.setDead();
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public int getBrightnessForRender(float dummy)
+	{
+		return 0xF000F0;
 	}
 
 	@SideOnly(Side.CLIENT)

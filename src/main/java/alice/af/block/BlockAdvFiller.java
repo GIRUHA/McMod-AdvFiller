@@ -180,5 +180,49 @@ public final class BlockAdvFiller extends BlockContainer
 		}
 
 		world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+
+		TileEntityAdvFiller f = this.getTileEntity(world, x, y, z);
+		if(f != null)
+		{
+			f.startY = y;
+			f.endY = y + 4;
+			switch(direction)
+			{
+			case 0:
+				f.startX = x - 2;
+				f.endX = x + 2;
+				f.startZ = z - 5;
+				f.endZ = z - 1;
+				break;
+			case 1:
+				f.startX = x + 1;
+				f.endX = x + 5;
+				f.startZ = z - 2;
+				f.endZ = z + 2;
+				break;
+			case 2:
+				f.startX = x - 2;
+				f.endX = x + 2;
+				f.startZ = z + 1;
+				f.endZ = z + 5;
+				break;
+			case 3:
+				f.startX = x - 5;
+				f.endX = x - 1;
+				f.startZ = z - 2;
+				f.endZ = z + 2;
+				break;
+			}
+		}
+	}
+
+	public TileEntityAdvFiller getTileEntity(World world, int x, int y, int z)
+	{
+		TileEntity _t = world.getTileEntity(x, y, z);
+		if((_t == null) || !(_t instanceof TileEntityAdvFiller))
+		{
+			return null;
+		}
+		return (TileEntityAdvFiller)_t;
 	}
 }

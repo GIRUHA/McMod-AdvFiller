@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL11;
 import alice.af.client.entity.EntityFillerFrame;
 import alice.af.tileentity.TileEntityAdvFiller;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
@@ -23,41 +22,30 @@ public final class RenderFillerFrame extends Render
 	{
 		TileEntityAdvFiller tile = e.filler;
 
-		if(!e.filler.doRender)
-		{
-			return;
-		}
+		double fromX = tile.startX - tile.xCoord;
+		double toX = tile.endX - tile.xCoord + 1;
+		double fromY = tile.startY - tile.yCoord;
+		double toY = tile.endY - tile.yCoord + 1;
+		double fromZ = tile.startZ - tile.zCoord;
+		double toZ = tile.endZ - tile.zCoord + 1;
+		AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(fromX, fromY, fromZ, toX, toY, toZ);
 
-		double fromX = -(tile.xCoord - tile.startX);
-		double toX = -(tile.xCoord - tile.endX) + 1;
-		double fromY = -(tile.yCoord - tile.startY);
-		double toY = -(tile.yCoord - tile.endY) + 1;
-		double fromZ = -(tile.zCoord - tile.startZ);
-		double toZ = -(tile.zCoord - tile.endZ) + 1;
-
-		GL11.glPushAttrib(GL11.GL_TEXTURE_2D);
-//		GL11.glPushAttrib(GL11.GL_LIGHTING);
-//		GL11.glPushAttrib(GL11.GL_CULL_FACE);
-		GL11.glPushAttrib(GL11.GL_BLEND);
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glPushMatrix();
 
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-//		GL11.glDisable(GL11.GL_LIGHTING);
-//		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		GL11.glPushMatrix();
-		GL11.glTranslated(x, y, z);
-		RenderGlobal.drawOutlinedBoundingBox(AxisAlignedBB.getBoundingBox(fromX, fromY, fromZ, toX, toY, toZ), 0xFFFFFF);
+		GL11.glTranslated(x - 0.5, y, z - 0.5);
+		GL11.glColor4d(1, 0, 0, 0.5);
+		GL11.glLineWidth(2F);
+		GL11.glDepthMask(false);
+		RenderGlobal.drawOutlinedBoundingBox(bb, -1);
+		GL11.glDepthMask(true);
+
 		GL11.glPopMatrix();
-
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_BLEND);
-//		GL11.glEnable(GL11.GL_LIGHTING);
-//		GL11.glEnable(GL11.GL_CULL_FACE);
-
-//		GL11.glPopAttrib();
-//		GL11.glPopAttrib();
-		GL11.glPopAttrib();
 		GL11.glPopAttrib();
 	}
 
