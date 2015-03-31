@@ -18,13 +18,13 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+//import net.minecraft.util.StatCollector;
 
 @SideOnly(Side.CLIENT)
 public final class GuiAdvFiller extends GuiContainer
 {
 	private static final ResourceLocation GUI = new ResourceLocation("advfiller", "textures/gui/container/advfiller.png");
-	private String guiCaption;
+//	private String guiCaption;
 	private SimpleNetworkWrapper netWrapper;
 	private int cx;
 	private int cy;
@@ -48,7 +48,7 @@ public final class GuiAdvFiller extends GuiContainer
 		this.ySize = 244;
 		this.filler = filler;
 
-		this.guiCaption = StatCollector.translateToLocal(filler.getInventoryName());
+//		this.guiCaption = StatCollector.translateToLocal(filler.getInventoryName());
 
 		this.left = filler.getLeft();
 		this.right = filler.getRight();
@@ -56,9 +56,9 @@ public final class GuiAdvFiller extends GuiContainer
 		this.down = filler.getBottom();
 		this.forward = filler.getForward();
 		this.type = filler.mode;
-		this.loopMode = false;
-		this.iterate = false;
-		this.drop = false;
+		this.loopMode = filler.loop;
+		this.iterate = filler.iterate;
+		this.drop = filler.drop;
 	}
 
 	@Override
@@ -107,6 +107,8 @@ public final class GuiAdvFiller extends GuiContainer
 			break;
 		case 2:
 			this.netWrapper.sendToServer(this.createMessage());
+			this.mc.displayGuiScreen(null);
+			this.mc.setIngameFocus();
 			break;
 		// Left
 		case 3:
@@ -162,16 +164,16 @@ public final class GuiAdvFiller extends GuiContainer
 			break;
 		// Forward
 		case 19:
-			this.forward = creasesNumber(this.forward, -16);
+			this.forward = creasesNumber(this.forward, -16, 1, 256);
 			break;
 		case 20:
-			this.forward = creasesNumber(this.forward, -1);
+			this.forward = creasesNumber(this.forward, -1, 1, 256);
 			break;
 		case 21:
-			this.forward = creasesNumber(this.forward, 1);
+			this.forward = creasesNumber(this.forward, 1, 1, 256);
 			break;
 		case 22:
-			this.forward = creasesNumber(this.forward, 16);
+			this.forward = creasesNumber(this.forward, 16, 1, 256);
 			break;
 		case 23:
 			this.loopMode = !this.loopMode;
@@ -196,21 +198,29 @@ public final class GuiAdvFiller extends GuiContainer
 		this.filler.setBottom(this.down);
 		this.filler.setForward(this.forward);
 		this.filler.mode = this.type;
+		this.filler.loop = this.loopMode;
+		this.filler.iterate = this.iterate;
+		this.filler.drop = this.drop;
 		return new ChangeFillerConfig(this.filler);
 	}
 
-	public int creasesNumber(int i, int j)
+	public int creasesNumber(int current, int add)
 	{
-		i += j;
-		if (i < 0)
+		return this.creasesNumber(current, add, 0, 256);
+	}
+
+	public int creasesNumber(int current, int add, int min, int max)
+	{
+		current += add;
+		if (current < min)
 		{
-			i = 0;
+			current = min;
 		}
-		else if (i > 256)
+		else if (current > max)
 		{
-			i = 256;
+			current = max;
 		}
-		return i;
+		return current;
 	}
 
 	@Override

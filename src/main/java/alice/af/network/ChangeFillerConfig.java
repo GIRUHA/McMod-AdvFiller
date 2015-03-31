@@ -24,6 +24,9 @@ public final class ChangeFillerConfig implements IMessage, IMessageHandler<Chang
 	private int down;
 	private int forward;
 	private FillerMode mode;
+	private boolean loop;
+	private boolean iterate;
+	private boolean drop;
 
 	public ChangeFillerConfig()
 	{
@@ -43,6 +46,9 @@ public final class ChangeFillerConfig implements IMessage, IMessageHandler<Chang
 		this.down = tile.getBottom();
 		this.forward = tile.getForward();
 		this.mode = tile.mode;
+		this.loop = tile.loop;
+		this.iterate = tile.iterate;
+		this.drop = tile.drop;
 	}
 
 	private void updateTile(NetHandlerPlayServer server)
@@ -66,6 +72,9 @@ public final class ChangeFillerConfig implements IMessage, IMessageHandler<Chang
 		filler.setBottom(this.down);
 		filler.setForward(this.forward);
 		filler.mode = this.mode;
+		filler.loop = this.loop;
+		filler.iterate = this.iterate;
+		filler.drop = this.drop;
 
 		Block b = world.getBlock(this.xCoord, this.yCoord, this.zCoord);
 		if(b instanceof BlockAdvFiller)
@@ -95,6 +104,9 @@ public final class ChangeFillerConfig implements IMessage, IMessageHandler<Chang
 		this.down = buf.readShort();
 		this.forward = buf.readShort();
 		this.mode = FillerMode.getMode(buf.readByte());
+		this.loop = buf.readBoolean();
+		this.iterate = buf.readBoolean();
+		this.drop = buf.readBoolean();
 	}
 
 	@Override
@@ -110,5 +122,8 @@ public final class ChangeFillerConfig implements IMessage, IMessageHandler<Chang
 		buf.writeShort(this.down);
 		buf.writeShort(this.forward);
 		buf.writeByte(this.mode.toInteger());
+		buf.writeBoolean(this.loop);
+		buf.writeBoolean(this.iterate);
+		buf.writeBoolean(this.drop);
 	}
 }

@@ -1,5 +1,8 @@
 package alice.af;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.SidedProxy;
@@ -23,6 +26,8 @@ public final class AdvancedFiller
 
 	@SidedProxy(clientSide = "alice.af.client.ClientProxy", serverSide = "alice.af.Proxy")
 	public static Proxy PROXY;
+
+	public static final Logger LOG = LogManager.getLogger("advfiller");
 
 	@Mod.EventHandler
 	public void forgePreInitialization(FMLPreInitializationEvent event)

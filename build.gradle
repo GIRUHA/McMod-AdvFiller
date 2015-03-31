@@ -23,8 +23,8 @@ buildscript
 apply plugin: 'forge'
 
 version = "0.2"
-group= "alice.bcc"
-archivesBaseName = "BCColle"
+group= "alice.af"
+archivesBaseName = "AdvancedFiller"
 
 minecraft
 {

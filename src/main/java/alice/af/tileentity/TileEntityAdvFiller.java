@@ -24,6 +24,9 @@ public final class TileEntityAdvFiller extends TileEntity implements IInventory
 	public int endY;
 	public int endZ;
 	public FillerMode mode = FillerMode.QUARRY;
+	public boolean loop;
+	public boolean iterate;
+	public boolean drop;
 
 	public EntityFillerFrame frame;
 
@@ -97,6 +100,9 @@ public final class TileEntityAdvFiller extends TileEntity implements IInventory
 		this.endY = tag.getInteger("eny");
 		this.endZ = tag.getInteger("enz");
 		this.mode = FillerMode.getMode(tag.getByte("mod"));
+		this.loop = tag.getBoolean("lop");
+		this.iterate = tag.getBoolean("itr");
+		this.drop = tag.getBoolean("drp");
 
 		if(updateInventory && tag.hasKey("inv"))
 		{
@@ -143,6 +149,9 @@ public final class TileEntityAdvFiller extends TileEntity implements IInventory
 		tag.setInteger("eny", this.endY);
 		tag.setInteger("enz", this.endZ);
 		tag.setByte("mod", (byte)this.mode.toInteger());
+		tag.setBoolean("lop", this.loop);
+		tag.setBoolean("itr", this.iterate);
+		tag.setBoolean("drp", this.drop);
 
 		if(sendInventory)
 		{

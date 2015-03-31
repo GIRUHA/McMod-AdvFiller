@@ -1,7 +1,12 @@
 package alice.af.client.entity;
 
+import java.lang.ref.WeakReference;
+
+import org.apache.logging.log4j.Logger;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import alice.af.AdvancedFiller;
 import alice.af.tileentity.TileEntityAdvFiller;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,12 +15,13 @@ import net.minecraft.world.World;
 
 public final class EntityFillerFrame extends Entity
 {
-	public final TileEntityAdvFiller filler;
+	public final Logger LOG;
+	public final WeakReference<TileEntityAdvFiller> filler;
 
 	public EntityFillerFrame(TileEntityAdvFiller filler)
 	{
 		super(filler.getWorldObj());
-		this.filler = filler;
+		this.filler = new WeakReference<TileEntityAdvFiller>(filler);
 
 		this.setSize(1F, 1F);
 		// レンダリングにはlastTickPosが使われるのでこのメソッドを使用
@@ -24,6 +30,8 @@ public final class EntityFillerFrame extends Entity
 		this.prevPosX = filler.xCoord;
 		this.prevPosY = filler.yCoord;
 		this.prevPosZ = filler.zCoord;
+
+		LOG = AdvancedFiller.LOG;
 	}
 
 	@Override
@@ -56,10 +64,20 @@ public final class EntityFillerFrame extends Entity
 			throw new IllegalStateException("SERVER SIDE!");
 		}
 
-		TileEntity te =  world.getTileEntity(this.filler.xCoord, this.filler.yCoord, this.filler.zCoord);
-		if((te == null) || !(te instanceof TileEntityAdvFiller))
+		TileEntityAdvFiller f = this.filler.get();
+		if(f == null)
 		{
-			this.filler.frame = null;
+			LOG.info("TileEntity at {},{},{} has gone.", this.posX, this.posY, this.posZ);
+			this.setDead();
+			return;
+		}
+
+		TileEntity te =  world.getTileEntity(f.xCoord, f.yCoord, f.zCoord);
+		if((te == null) || (te != f))
+		{
+			LOG.info("Instance cur={} org={}", (te != null) ? te.hashCode() : 0, f.hashCode());
+			f.frame = null;
+			f = null;
 			this.setDead();
 		}
 	}

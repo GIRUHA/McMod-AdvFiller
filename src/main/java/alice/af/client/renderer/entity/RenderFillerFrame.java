@@ -20,7 +20,11 @@ public final class RenderFillerFrame extends Render
 
 	private void render(EntityFillerFrame e, double x, double y, double z)
 	{
-		TileEntityAdvFiller tile = e.filler;
+		TileEntityAdvFiller tile = e.filler.get();
+		if(tile == null)
+		{
+			return;
+		}
 
 		double fromX = tile.startX - tile.xCoord;
 		double toX = tile.endX - tile.xCoord + 1;
@@ -28,6 +32,8 @@ public final class RenderFillerFrame extends Render
 		double toY = tile.endY - tile.yCoord + 1;
 		double fromZ = tile.startZ - tile.zCoord;
 		double toZ = tile.endZ - tile.zCoord + 1;
+
+		tile = null;
 		AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(fromX, fromY, fromZ, toX, toY, toZ);
 
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
